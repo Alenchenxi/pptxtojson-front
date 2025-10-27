@@ -135,9 +135,17 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
     switch (relationshipArrayItem['attrs']['Type']) {
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout':
         layoutFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        slideResObj[relationshipArrayItem['attrs']['Id']] = {
+          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
+          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        }
         break
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesSlide':
         noteFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        slideResObj[relationshipArrayItem['attrs']['Id']] = {
+          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
+          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        }
         break
       case 'http://schemas.microsoft.com/office/2007/relationships/diagramDrawing':
         diagramFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')

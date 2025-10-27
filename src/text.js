@@ -133,7 +133,7 @@ export function genSpanElement(node, pNode, textBodyNode, pFontStyle, slideLayou
   if (shadow) styleText += `text-shadow: ${shadow};`
 
   const linkID = getTextByPathList(node, ['a:rPr', 'a:hlinkClick', 'attrs', 'r:id'])
-  if (linkID) {
+  if (linkID && warpObj['slideResObj'][linkID]) {
     const linkURL = warpObj['slideResObj'][linkID]['target']
     return `<span style="${styleText}"><a href="${linkURL}" target="_blank">${text.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s/g, '&nbsp;')}</a></span>`
   } 
