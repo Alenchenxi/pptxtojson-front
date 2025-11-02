@@ -48,14 +48,49 @@ export function getFontColor(node, pNode, lstStyle, pFontStyle, lvl, warpObj) {
   return color || ''
 }
 
-export function getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles) {
+export function getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles, textBodyNode, pNode) {
   let fontSize
 
   if (getTextByPathList(node, ['a:rPr', 'attrs', 'sz'])) fontSize = getTextByPathList(node, ['a:rPr', 'attrs', 'sz']) / 100
 
+  if ((isNaN(fontSize) || !fontSize) && pNode) {
+    if (getTextByPathList(pNode, ['a:endParaRPr', 'attrs', 'sz'])) {
+      fontSize = getTextByPathList(pNode, ['a:endParaRPr', 'attrs', 'sz']) / 100
+    }
+  }
+
+  if ((isNaN(fontSize) || !fontSize) && textBodyNode) {
+    const lstStyle = getTextByPathList(textBodyNode, ['a:lstStyle'])
+    if (lstStyle) {
+      let lvl = 1
+      if (pNode) {
+        const lvlNode = getTextByPathList(pNode, ['a:pPr', 'attrs', 'lvl'])
+        if (lvlNode !== undefined) lvl = parseInt(lvlNode) + 1
+      }
+
+      const sz = getTextByPathList(lstStyle, [`a:lvl${lvl}pPr`, 'a:defRPr', 'attrs', 'sz'])
+      if (sz) fontSize = parseInt(sz) / 100
+    }
+  }
+
   if ((isNaN(fontSize) || !fontSize)) {
     const sz = getTextByPathList(slideLayoutSpNode, ['p:txBody', 'a:lstStyle', 'a:lvl1pPr', 'a:defRPr', 'attrs', 'sz'])
-    fontSize = parseInt(sz) / 100
+    if (sz) fontSize = parseInt(sz) / 100
+  }
+
+  if ((isNaN(fontSize) || !fontSize) && slideLayoutSpNode) {
+    let lvl = 1
+    if (pNode) {
+      const lvlNode = getTextByPathList(pNode, ['a:pPr', 'attrs', 'lvl'])
+      if (lvlNode !== undefined) lvl = parseInt(lvlNode) + 1
+    }
+    const layoutSz = getTextByPathList(slideLayoutSpNode, ['p:txBody', 'a:lstStyle', `a:lvl${lvl}pPr`, 'a:defRPr', 'attrs', 'sz'])
+    if (layoutSz) fontSize = parseInt(layoutSz) / 100
+  }
+
+  if ((isNaN(fontSize) || !fontSize) && pNode) {
+    const paraSz = getTextByPathList(pNode, ['a:pPr', 'a:defRPr', 'attrs', 'sz'])
+    if (paraSz) fontSize = parseInt(paraSz) / 100
   }
 
   if (isNaN(fontSize) || !fontSize) {

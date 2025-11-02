@@ -111,7 +111,7 @@ export function genSpanElement(node, pNode, textBodyNode, pFontStyle, slideLayou
 
   let styleText = ''
   const fontColor = getFontColor(node, pNode, lstStyle, pFontStyle, lvl, warpObj)
-  const fontSize = getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles)
+  const fontSize = getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles, textBodyNode, pNode)
   const fontType = getFontType(node, type, warpObj)
   const fontBold = getFontBold(node)
   const fontItalic = getFontItalic(node)
