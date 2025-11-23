@@ -30,7 +30,16 @@ export interface GradientFill {
   }
 }
 
-export type Fill = ColorFill | ImageFill | GradientFill
+export interface PatternFill {
+  type: 'pattern'
+  value: {
+    type: string
+    foregroundColor: string
+    backgroundColor: string
+  }
+}
+
+export type Fill = ColorFill | ImageFill | GradientFill | PatternFill
 
 export interface Border {
   borderColor: string

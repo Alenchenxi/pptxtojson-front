@@ -120,10 +120,11 @@ func()
 
 	- 页面备注 `note`
 
-	- 页面背景填充（颜色、图片、渐变） `fill`
+	- 页面背景填充（颜色、图片、渐变、图案） `fill`
 		- 纯色填充 `type='color'`
 		- 图片填充 `type='image'`
 		- 渐变填充 `type='gradient'`
+		- 图案填充 `type='pattern'`
 
 	- 页面切换动画 `transition`
 		- 类型 `type`
@@ -142,7 +143,7 @@ func()
 			- 边框类型（实线、点线、虚线） `borderType`
 			- 非实线边框样式 `borderStrokeDasharray`
 			- 阴影 `shadow`
-			- 填充（颜色、图片、渐变） `fill`
+			- 填充（颜色、图片、渐变、图案） `fill`
 			- 内容文字（HTML富文本） `content`
 			- 垂直翻转 `isFlipV`
 			- 水平翻转 `isFlipH`
@@ -178,7 +179,7 @@ func()
 			- 边框类型（实线、点线、虚线） `borderType`
 			- 非实线边框样式 `borderStrokeDasharray`
 			- 阴影 `shadow`
-			- 填充（颜色、图片、渐变） `fill`
+			- 填充（颜色、图片、渐变、图案） `fill`
 			- 内容文字（HTML富文本） `content`
 			- 垂直翻转 `isFlipV`
 			- 水平翻转 `isFlipH`
