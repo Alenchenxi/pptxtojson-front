@@ -144,7 +144,7 @@ func()
 			- 非实线边框样式 `borderStrokeDasharray`
 			- 阴影 `shadow`
 			- 填充（颜色、图片、渐变、图案） `fill`
-			- 内容文字（HTML富文本） `content`
+			- 内容文字（HTML富文本：字体、字号、颜色、渐变、下划线、删除线、斜体、加粗、阴影、角标、超链接） `content`
 			- 垂直翻转 `isFlipV`
 			- 水平翻转 `isFlipH`
 			- 旋转角度 `rotate`
@@ -180,7 +180,7 @@ func()
 			- 非实线边框样式 `borderStrokeDasharray`
 			- 阴影 `shadow`
 			- 填充（颜色、图片、渐变、图案） `fill`
-			- 内容文字（HTML富文本） `content`
+			- 内容文字（HTML富文本，与文字元素一致） `content`
 			- 垂直翻转 `isFlipV`
 			- 水平翻转 `isFlipH`
 			- 旋转角度 `rotate`
