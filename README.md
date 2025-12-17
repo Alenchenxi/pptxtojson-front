@@ -151,6 +151,11 @@ func()
 			- 垂直对齐方向 `vAlign`
 			- 是否为竖向文本 `isVertical`
 			- 元素名 `name`
+			- 自动调整大小 `autoFit`
+				- 类型 `type`
+					- `shape`：文本框高度会根据文本内容自动调整
+					- `text`：文本框大小固定，字体大小会自动缩放以适应文本框
+				- 字体缩放比例（type='text'专有） `fontScale`
 
 		- 图片
 			- 类型 `type='image'`
@@ -188,6 +193,7 @@ func()
 			- 垂直对齐方向 `vAlign`
 			- 形状路径 `path`
 			- 元素名 `name`
+			- 自动调整大小 `autoFit`
 
 		- 表格
 			- 类型 `type='table'`

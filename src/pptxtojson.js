@@ -3,7 +3,7 @@ import { readXmlFile } from './readXmlFile'
 import { getBorder } from './border'
 import { getSlideBackgroundFill, getShapeFill, getSolidFill, getPicFill, getPicFilters } from './fill'
 import { getChartInfo } from './chart'
-import { getVerticalAlign } from './align'
+import { getVerticalAlign, getTextAutoFit } from './align'
 import { getPosition, getSize } from './position'
 import { genTextBody } from './text'
 import { getCustomShapePath } from './shape'
@@ -617,6 +617,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, name,
 
   const vAlign = getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type)
   const isVertical = getTextByPathList(node, ['p:txBody', 'a:bodyPr', 'attrs', 'vert']) === 'eaVert'
+  const autoFit = getTextAutoFit(node, slideLayoutSpNode, slideMasterSpNode)
 
   const data = {
     left,
@@ -638,6 +639,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, name,
   }
 
   if (shadow) data.shadow = shadow
+  if (autoFit) data.autoFit = autoFit
 
   const isHasValidText = data.content && hasValidText(data.content)
 

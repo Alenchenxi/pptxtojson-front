@@ -63,3 +63,61 @@ export function getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode) {
   }
   return (anchor === 'ctr') ? 'mid' : ((anchor === 'b') ? 'down' : 'up')
 }
+
+export function getTextAutoFit(node, slideLayoutSpNode, slideMasterSpNode) {
+  const bodyPr = getTextByPathList(node, ['p:txBody', 'a:bodyPr'])
+  let autoFitType = 'none'
+
+  if (bodyPr) {
+    if (bodyPr['a:spAutoFit']) autoFitType = 'shape'
+    else if (bodyPr['a:normAutofit']) {
+      autoFitType = 'text'
+      const fontScale = getTextByPathList(bodyPr['a:normAutofit'], ['attrs', 'fontScale'])
+      if (fontScale) {
+        const scalePercent = parseInt(fontScale) / 1000
+        return {
+          type: 'text',
+          fontScale: scalePercent,
+        }
+      }
+    }
+  }
+
+  if (autoFitType === 'none' && slideLayoutSpNode) {
+    const layoutBodyPr = getTextByPathList(slideLayoutSpNode, ['p:txBody', 'a:bodyPr'])
+    if (layoutBodyPr) {
+      if (layoutBodyPr['a:spAutoFit']) autoFitType = 'shape'
+      else if (layoutBodyPr['a:normAutofit']) {
+        autoFitType = 'text'
+        const fontScale = getTextByPathList(layoutBodyPr['a:normAutofit'], ['attrs', 'fontScale'])
+        if (fontScale) {
+          const scalePercent = parseInt(fontScale) / 1000
+          return {
+            type: 'text',
+            fontScale: scalePercent,
+          }
+        }
+      }
+    }
+  }
+
+  if (autoFitType === 'none' && slideMasterSpNode) {
+    const masterBodyPr = getTextByPathList(slideMasterSpNode, ['p:txBody', 'a:bodyPr'])
+    if (masterBodyPr) {
+      if (masterBodyPr['a:spAutoFit']) autoFitType = 'shape'
+      else if (masterBodyPr['a:normAutofit']) {
+        autoFitType = 'text'
+        const fontScale = getTextByPathList(masterBodyPr['a:normAutofit'], ['attrs', 'fontScale'])
+        if (fontScale) {
+          const scalePercent = parseInt(fontScale) / 1000
+          return {
+            type: 'text',
+            fontScale: scalePercent,
+          }
+        }
+      }
+    }
+  }
+
+  return autoFitType === 'none' ? null : { type: autoFitType }
+}

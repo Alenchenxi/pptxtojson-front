@@ -47,6 +47,11 @@ export interface Border {
   borderType:'solid' | 'dashed' | 'dotted'
 }
 
+export interface AutoFit {
+  type: 'shape' | 'text'
+  fontScale?: number
+}
+
 export interface Shape {
   type: 'shape'
   left: number
@@ -68,6 +73,7 @@ export interface Shape {
   path?: string
   name: string
   order: number
+  autoFit?: AutoFit
 }
 
 export interface Text {
@@ -90,6 +96,7 @@ export interface Text {
   vAlign: string
   name: string
   order: number
+  autoFit?: AutoFit
 }
 
 export interface Image {
