@@ -1,4 +1,4 @@
-import { getHorizontalAlign } from './align'
+import { getHorizontalAlign, getParagraphSpacing } from './align'
 import { getTextByPathList } from './utils'
 
 import {
@@ -51,6 +51,14 @@ export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, type, warpO
     }
 
     const align = getHorizontalAlign(pNode, spNode, type, warpObj)
+    const spacing = getParagraphSpacing(pNode)
+
+    let styleText = `text-align: ${align};`
+    if (spacing) {
+      if (spacing.lineSpacing) styleText += `line-height: ${spacing.lineSpacing};`
+      if (spacing.spaceBefore) styleText += `margin-top: ${spacing.spaceBefore};`
+      if (spacing.spaceAfter) styleText += `margin-bottom: ${spacing.spaceAfter};`
+    }
 
     const listType = getListType(pNode)
     if (listType) {
@@ -63,14 +71,14 @@ export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, type, warpO
         text += `<${listType}>`
         isList = listType
       }
-      text += `<li style="text-align: ${align};">`
+      text += `<li style="${styleText}">`
     }
     else {
       if (isList) {
         text += `</${isList}>`
         isList = ''
       }
-      text += `<p style="text-align: ${align};">`
+      text += `<p style="${styleText}">`
     }
     
     if (!rNode) {

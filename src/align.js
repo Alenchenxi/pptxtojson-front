@@ -97,3 +97,53 @@ export function getTextAutoFit(node, slideLayoutSpNode, slideMasterSpNode) {
 
   return null
 }
+
+export function getParagraphSpacing(pNode) {
+  if (!pNode) return null
+
+  const pPrNode = pNode['a:pPr']
+  if (!pPrNode) return null
+
+  const spacing = {}
+
+  const lnSpcNode = pPrNode['a:lnSpc']
+  if (lnSpcNode) {
+    const spcPct = getTextByPathList(lnSpcNode, ['a:spcPct', 'attrs', 'val'])
+    const spcPts = getTextByPathList(lnSpcNode, ['a:spcPts', 'attrs', 'val'])
+
+    if (spcPct) {
+      spacing.lineSpacing = parseInt(spcPct) / 1000 / 100
+    } 
+    else if (spcPts) {
+      spacing.lineSpacing = parseInt(spcPts) / 100 + 'pt'
+    }
+  }
+
+  const spcBefNode = pPrNode['a:spcBef']
+  if (spcBefNode) {
+    const spcPct = getTextByPathList(spcBefNode, ['a:spcPct', 'attrs', 'val'])
+    const spcPts = getTextByPathList(spcBefNode, ['a:spcPts', 'attrs', 'val'])
+
+    if (spcPct) {
+      spacing.spaceBefore = parseInt(spcPct) / 1000 + 'em'
+    } 
+    else if (spcPts) {
+      spacing.spaceBefore = parseInt(spcPts) / 100 + 'pt'
+    }
+  }
+
+  const spcAftNode = pPrNode['a:spcAft']
+  if (spcAftNode) {
+    const spcPct = getTextByPathList(spcAftNode, ['a:spcPct', 'attrs', 'val'])
+    const spcPts = getTextByPathList(spcAftNode, ['a:spcPts', 'attrs', 'val'])
+
+    if (spcPct) {
+      spacing.spaceAfter = parseInt(spcPct) / 1000 + 'em'
+    } 
+    else if (spcPts) {
+      spacing.spaceAfter = parseInt(spcPts) / 100 + 'pt'
+    }
+  }
+
+  return Object.keys(spacing).length > 0 ? spacing : null
+}
