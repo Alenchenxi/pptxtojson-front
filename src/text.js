@@ -24,7 +24,7 @@ export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, type, warpO
   const pNode = textBodyNode['a:p']
   const pNodes = pNode.constructor === Array ? pNode : [pNode]
 
-  let isList = ''
+  const listTypes = []
 
   for (const pNode of pNodes) {
     let rNode = pNode['a:r']
@@ -61,22 +61,29 @@ export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, type, warpO
     }
 
     const listType = getListType(pNode)
+    const listLevel = getListLevel(pNode)
+
     if (listType) {
-      if (!isList) {
-        text += `<${listType}>`
-        isList = listType
+      while (listTypes.length > listLevel + 1) {
+        const closedListType = listTypes.pop()
+        text += `</${closedListType}>`
       }
-      else if (isList && isList !== listType) {
-        text += `</${isList}>`
+
+      if (listTypes[listLevel] === undefined) {
         text += `<${listType}>`
-        isList = listType
+        listTypes[listLevel] = listType
+      }
+      else if (listTypes[listLevel] !== listType) {
+        text += `</${listTypes[listLevel]}>`
+        text += `<${listType}>`
+        listTypes[listLevel] = listType
       }
       text += `<li style="${styleText}">`
     }
     else {
-      if (isList) {
-        text += `</${isList}>`
-        isList = ''
+      while (listTypes.length > 0) {
+        const closedListType = listTypes.pop()
+        text += `</${closedListType}>`
       }
       text += `<p style="${styleText}">`
     }
@@ -120,6 +127,10 @@ export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, type, warpO
     if (listType) text += '</li>'
     else text += '</p>'
   }
+  while (listTypes.length > 0) {
+    const closedListType = listTypes.pop()
+    text += `</${closedListType}>`
+  }
   return text
 }
 
@@ -131,6 +142,15 @@ export function getListType(node) {
   if (pPrNode['a:buAutoNum']) return 'ol'
   
   return ''
+}
+export function getListLevel(node) {
+  const pPrNode = node['a:pPr']
+  if (!pPrNode) return -1
+
+  const lvlNode = getTextByPathList(pPrNode, ['attrs', 'lvl'])
+  if (lvlNode !== undefined) return parseInt(lvlNode)
+
+  return 0
 }
 
 export function genSpanElement(node, pNode, textBodyNode, pFontStyle, slideLayoutSpNode, type, warpObj) {
