@@ -6,7 +6,7 @@ import { getChartInfo } from './chart'
 import { getVerticalAlign, getTextAutoFit } from './align'
 import { getPosition, getSize } from './position'
 import { genTextBody } from './text'
-import { getCustomShapePath } from './shape'
+import { getCustomShapePath, identifyShape } from './shape'
 import { extractFileExtension, base64ArrayBuffer, getTextByPathList, angleToDegrees, getMimeType, isVideoLink, escapeHtml, hasValidText, numberToFixed } from './utils'
 import { getShadow } from './shadow'
 import { getTableBorders, getTableCellParams, getTableRowParams } from './table'
@@ -800,7 +800,17 @@ async function processPicNode(node, warpObj, source) {
     if (srcRectAttrs.l) rect.l = srcRectAttrs.l / 1000
     if (srcRectAttrs.r) rect.r = srcRectAttrs.r / 1000
   }
-  const geom = getTextByPathList(node, ['p:spPr', 'a:prstGeom', 'attrs', 'prst']) || 'rect'
+  let geom = 'rect'
+  const prstGeom = getTextByPathList(node, ['p:spPr', 'a:prstGeom', 'attrs', 'prst'])
+  const custGeom = getTextByPathList(node, ['p:spPr', 'a:custGeom'])
+
+  if (prstGeom) {
+    geom = prstGeom
+  }
+  else if (custGeom) {
+    geom = identifyShape(custGeom)
+    if (geom !== 'custom') geom = `custom:${geom}`
+  }
 
   const { borderColor, borderWidth, borderType, strokeDasharray } = getBorder(node, undefined, warpObj)
 
