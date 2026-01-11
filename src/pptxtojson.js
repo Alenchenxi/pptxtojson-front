@@ -494,6 +494,7 @@ async function processGroupSpNode(node, warpObj, source, parentGroupHierarchy = 
   let rotate = getTextByPathList(xfrmNode, ['attrs', 'rot']) || 0
   if (rotate) rotate = angleToDegrees(rotate)
 
+  // 计算缩放因子
   const ws = cx / chcx
   const hs = cy / chcy
 
@@ -514,6 +515,33 @@ async function processGroupSpNode(node, warpObj, source, parentGroupHierarchy = 
     }
   }
 
+  const processedElements = elements.map(element => ({
+    ...element,
+    left: numberToFixed((element.left - chx) * ws),
+    top: numberToFixed((element.top - chy) * hs),
+    width: numberToFixed(element.width * ws),
+    height: numberToFixed(element.height * hs),
+    ...(element.type === 'group' && element.elements ? {
+      elements: processNestedGroupElements(element.elements, ws, hs)
+    } : {})
+  }))
+
+  function processNestedGroupElements(elements, ws, hs, depth = 0) {
+    if (depth > 10) return elements
+
+    return elements.map(element => {
+      const processed = {
+        ...element,
+        width: numberToFixed(element.width * ws),
+        height: numberToFixed(element.height * hs),
+      }
+      if (element.type === 'group' && element.elements) {
+        processed.elements = processNestedGroupElements(element.elements, ws, hs, depth + 1)
+      }
+      return processed
+    })
+  }
+
   return {
     type: 'group',
     top: numberToFixed(y),
@@ -524,13 +552,7 @@ async function processGroupSpNode(node, warpObj, source, parentGroupHierarchy = 
     order,
     isFlipV,
     isFlipH,
-    elements: elements.map(element => ({
-      ...element,
-      left: numberToFixed((element.left - chx) * ws),
-      top: numberToFixed((element.top - chy) * hs),
-      width: numberToFixed(element.width * ws),
-      height: numberToFixed(element.height * hs),
-    }))
+    elements: processedElements,
   }
 }
 
