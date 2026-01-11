@@ -611,6 +611,21 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, name,
   const shapType = getTextByPathList(node, ['p:spPr', 'a:prstGeom', 'attrs', 'prst'])
   const custShapType = getTextByPathList(node, ['p:spPr', 'a:custGeom'])
 
+  const keypoints = {}
+  if (shapType) {
+    const shapAdjst_ary = getTextByPathList(node, ['p:spPr', 'a:prstGeom', 'a:avLst', 'a:gd'])
+    if (shapAdjst_ary) {
+      const adjList = Array.isArray(shapAdjst_ary) ? shapAdjst_ary : [shapAdjst_ary]
+      for (const adj of adjList) {
+        const name = getTextByPathList(adj, ['attrs', 'name'])
+        const fmla = getTextByPathList(adj, ['attrs', 'fmla'])
+        if (name && fmla && fmla.startsWith('val ')) {
+          keypoints[name] = parseInt(fmla.substring(4)) / 50000
+        }
+      }
+    }
+  }
+
   const { top, left } = getPosition(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode)
   const { width, height } = getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode)
 
@@ -690,6 +705,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, name,
       type: 'shape',
       shapType,
       path: shapePath,
+      keypoints,
     }
   }
   if (shapType && !isHasValidText && (fill || borderWidth)) {
@@ -699,6 +715,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, name,
       content: '',
       shapType,
       path: shapePath,
+      keypoints,
     }
   }
   return {

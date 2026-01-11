@@ -71,6 +71,7 @@ export interface Shape {
   shapType: string
   vAlign: string
   path?: string
+  keypoints?: Record<string, number>
   name: string
   order: number
   autoFit?: AutoFit
