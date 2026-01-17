@@ -117,6 +117,12 @@ function shapeSnipRoundRect(w, h, adj1, adj2, shapeType, adjType) {
       adjC = adj1
       adjD = adj2
       break
+    case 'cornrTL':
+      adjA = adj1
+      adjB = 0
+      adjC = 0
+      adjD = 0
+      break
     default:
       adjA = adjB = adjC = adjD = 0
   }
@@ -588,7 +594,6 @@ export function getShapePath(shapType, w, h, node) {
           sAdj2_val = 0
         }
 
-        let needsTransform = false
         switch (shapType) {
           case 'roundRect':
           case 'flowChartAlternateProcess':
@@ -616,14 +621,16 @@ export function getShapePath(shapType, w, h, node) {
             if (sAdj2_val === undefined) sAdj2_val = 0
             break
           case 'snip1Rect':
-          case 'flowChartPunchedCard':
             shpTyp = 'snip'
             adjTyp = 'cornr1'
             if (sAdj1_val === undefined) sAdj1_val = 0.33334
             sAdj2_val = 0
-            if (shapType === 'flowChartPunchedCard') {
-              needsTransform = true
-            }
+            break
+          case 'flowChartPunchedCard':
+            shpTyp = 'snip'
+            adjTyp = 'cornrTL'
+            if (sAdj1_val === undefined) sAdj1_val = 0.33334
+            sAdj2_val = 0
             break
           case 'snip2DiagRect':
             shpTyp = 'snip'
@@ -640,17 +647,6 @@ export function getShapePath(shapType, w, h, node) {
           default:
         }
         pathData = shapeSnipRoundRect(w, h, sAdj1_val, sAdj2_val, shpTyp, adjTyp)
-
-        if (needsTransform) {
-          pathData = pathData.replace(/([MLQC])\s*([-\d.e]+)\s*([-\d.e]+)/gi, (match, command, x, y) => {
-            const newX = w - parseFloat(x)
-            return `${command}${newX} ${y}`
-          }).replace(/([MLQC])\s*([-\d.e]+)\s*([-\d.e]+)\s*([-\d.e]+)\s*([-\d.e]+)/gi, (match, command, c1x, c1y, x, y) => {
-            const newC1X = w - parseFloat(c1x)
-            const newX = w - parseFloat(x)
-            return `${command}${newC1X} ${c1y} ${newX} ${y}`
-          })
-        }
       }
       break
     case 'snipRoundRect':
@@ -3472,7 +3468,7 @@ export function getShapePath(shapType, w, h, node) {
         const maxAdj3 = cnstVal2 * w / ss
         const a3 = (adj3 < 0) ? 0 : (adj3 > maxAdj3) ? maxAdj3 : adj3
         const q2 = a3 * ss / w
-        const maxAdj4 = cnstVal1 - q2
+        const maxAdj4 = cnstVal2 - q2
         const a4 = (adj4 < 0) ? 0 : (adj4 > maxAdj4) ? maxAdj4 : adj4
         const dy1 = ss * a2 / cnstVal2
         const dy2 = ss * a1 / cnstVal3
