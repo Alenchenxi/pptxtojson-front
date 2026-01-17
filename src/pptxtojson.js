@@ -132,26 +132,31 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
   const diagramResObj = {}
 
   for (const relationshipArrayItem of relationshipArray) {
+    const relType = relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', '')
+    let relTarget = relationshipArrayItem['attrs']['Target']
+    if (relTarget.indexOf('../') !== -1) relTarget = relTarget.replace('../', 'ppt/')
+    else relTarget = 'ppt/slides/' + relTarget
+
     switch (relationshipArrayItem['attrs']['Type']) {
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout':
-        layoutFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        layoutFilename = relTarget
         slideResObj[relationshipArrayItem['attrs']['Id']] = {
-          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
-          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+          type: relType,
+          target: relTarget
         }
         break
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesSlide':
-        noteFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        noteFilename = relTarget
         slideResObj[relationshipArrayItem['attrs']['Id']] = {
-          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
-          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+          type: relType,
+          target: relTarget
         }
         break
       case 'http://schemas.microsoft.com/office/2007/relationships/diagramDrawing':
-        diagramFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        diagramFilename = relTarget
         slideResObj[relationshipArrayItem['attrs']['Id']] = {
-          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
-          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+          type: relType,
+          target: relTarget
         }
         break
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image':
@@ -159,8 +164,8 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink':
       default:
         slideResObj[relationshipArrayItem['attrs']['Id']] = {
-          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
-          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/'),
+          type: relType,
+          target: relTarget,
         }
     }
   }
@@ -176,14 +181,19 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
   if (relationshipArray.constructor !== Array) relationshipArray = [relationshipArray]
 
   for (const relationshipArrayItem of relationshipArray) {
+    const relType = relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', '')
+    let relTarget = relationshipArrayItem['attrs']['Target']
+    if (relTarget.indexOf('../') !== -1) relTarget = relTarget.replace('../', 'ppt/')
+    else relTarget = 'ppt/slideLayouts/' + relTarget
+
     switch (relationshipArrayItem['attrs']['Type']) {
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster':
-        masterFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        masterFilename = relTarget
         break
       default:
         layoutResObj[relationshipArrayItem['attrs']['Id']] = {
-          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
-          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/'),
+          type: relType,
+          target: relTarget,
         }
     }
   }
@@ -197,14 +207,19 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
   if (relationshipArray.constructor !== Array) relationshipArray = [relationshipArray]
 
   for (const relationshipArrayItem of relationshipArray) {
+    const relType = relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', '')
+    let relTarget = relationshipArrayItem['attrs']['Target']
+    if (relTarget.indexOf('../') !== -1) relTarget = relTarget.replace('../', 'ppt/')
+    else relTarget = 'ppt/slideMasters/' + relTarget
+
     switch (relationshipArrayItem['attrs']['Type']) {
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme':
-        themeFilename = relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
+        themeFilename = relTarget
         break
       default:
         masterResObj[relationshipArrayItem['attrs']['Id']] = {
-          type: relationshipArrayItem['attrs']['Type'].replace('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', ''),
-          target: relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/'),
+          type: relType,
+          target: relTarget,
         }
     }
   }
