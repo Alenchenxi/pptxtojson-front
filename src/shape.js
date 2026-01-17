@@ -47,6 +47,7 @@ export function getCustomShapePath(custShapType, w, h) {
 
   let lnToNodes = pathNodes['a:lnTo']
   let cubicBezToNodes = pathNodes['a:cubicBezTo']
+  let quadBezToNodes = pathNodes['a:quadBezTo']
   const arcToNodes = pathNodes['a:arcTo']
   let closeNode = getTextByPathList(pathNodes, ['a:close'])
   if (!Array.isArray(moveToNode)) moveToNode = [moveToNode]
@@ -114,6 +115,30 @@ export function getCustomShapePath(custShapType, w, h) {
         })
       })
     }
+    if (quadBezToNodes) {
+      const quadBezToPtNodesAry = []
+      if (!Array.isArray(quadBezToNodes)) quadBezToNodes = [quadBezToNodes]
+      Object.keys(quadBezToNodes).forEach(key => {
+        quadBezToPtNodesAry.push(quadBezToNodes[key]['a:pt'])
+      })
+
+      quadBezToPtNodesAry.forEach(key => {
+        const pts_ary = []
+        key.forEach(pt => {
+          const pt_obj = {
+            x: pt['attrs']['x'],
+            y: pt['attrs']['y'],
+          }
+          pts_ary.push(pt_obj)
+        })
+        const order = key[0]['attrs']['order']
+        multiSapeAry.push({
+          type: 'quadBezTo',
+          quadBzPt: pts_ary,
+          order,
+        })
+      })
+    }
     if (arcToNodes) {
       const arcToNodesAttrs = arcToNodes['attrs']
       const order = arcToNodesAttrs['order']
@@ -171,7 +196,14 @@ export function getCustomShapePath(custShapType, w, h) {
         const Cx3 = parseInt(multiSapeAry[k].cubBzPt[2].x) * cX
         const Cy3 = parseInt(multiSapeAry[k].cubBzPt[2].y) * cY
         d += ' C' + Cx1 + ',' + Cy1 + ' ' + Cx2 + ',' + Cy2 + ' ' + Cx3 + ',' + Cy3
-      } 
+      }
+      else if (multiSapeAry[k].type === 'quadBezTo') {
+        const Qx1 = parseInt(multiSapeAry[k].quadBzPt[0].x) * cX
+        const Qy1 = parseInt(multiSapeAry[k].quadBzPt[0].y) * cY
+        const Qx2 = parseInt(multiSapeAry[k].quadBzPt[1].x) * cX
+        const Qy2 = parseInt(multiSapeAry[k].quadBzPt[1].y) * cY
+        d += ' Q' + Qx1 + ',' + Qy1 + ' ' + Qx2 + ',' + Qy2
+      }
       else if (multiSapeAry[k].type === 'arcTo') {
         const hR = parseInt(multiSapeAry[k].hR) * cX
         const wR = parseInt(multiSapeAry[k].wR) * cY
