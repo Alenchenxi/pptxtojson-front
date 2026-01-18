@@ -1,4 +1,12 @@
 # 🎨 pptxtojson
+
+<p>
+    <a href="https://www.github.com/pipipi-pikachu/pptxtojson/stargazers" target="_black"><img src="https://img.shields.io/github/stars/pipipi-pikachu/pptxtojson?logo=github" alt="stars" /></a>
+    <a href="https://www.github.com/pipipi-pikachu/pptxtojson/network/members" target="_black"><img src="https://img.shields.io/github/forks/pipipi-pikachu/pptxtojson?logo=github" alt="forks" /></a>
+    <a href="https://www.github.com/pipipi-pikachu/pptxtojson/blob/master/LICENSE" target="_black"><img src="https://img.shields.io/github/license/pipipi-pikachu/pptxtojson?logo=github" alt="license" /></a>
+    <a href="https://github.com/pipipi-pikachu/pptxtojson/issues" target="_black"><img src="https://img.shields.io/github/issues-closed/pipipi-pikachu/pptxtojson?logo=github" alt="issue"></a>
+</p>
+
 一个运行在浏览器中，可以将 .pptx 文件转为可读的 JSON 数据的 JavaScript 库。
 
 > 与其他的pptx文件解析工具的最大区别在于：
