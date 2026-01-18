@@ -503,7 +503,7 @@ async function processMathNode(node, warpObj, source) {
   let text = ''
   if (getTextByPathList(choice, ['p:sp', 'p:txBody', 'a:p', 'a:r'])) {
     const sp = getTextByPathList(choice, ['p:sp'])
-    text = genTextBody(sp['p:txBody'], sp, undefined, undefined, warpObj)
+    text = genTextBody(sp['p:txBody'], sp, undefined, undefined, undefined, warpObj)
   }
 
   return {
@@ -688,7 +688,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, name,
   else txtRotate = rotate
 
   let content = ''
-  if (node['p:txBody']) content = genTextBody(node['p:txBody'], node, slideLayoutSpNode, type, warpObj)
+  if (node['p:txBody']) content = genTextBody(node['p:txBody'], node, slideLayoutSpNode, slideMasterSpNode, type, warpObj)
 
   const { borderColor, borderWidth, borderType, strokeDasharray } = getBorder(node, type, warpObj)
   const fill = await getShapeFill(node, pNode, undefined, warpObj, source, groupHierarchy) || ''
@@ -1078,7 +1078,7 @@ async function genTable(node, warpObj) {
             a_sorce = 'a:nwCell'
           }
         }
-        const text = genTextBody(tcNode['a:txBody'], tcNode, undefined, undefined, warpObj)
+        const text = genTextBody(tcNode['a:txBody'], tcNode, undefined, undefined, undefined, warpObj)
         const cell = await getTableCellParams(tcNode, thisTblStyle, a_sorce, warpObj)
         const td = { text }
         if (cell.rowSpan) td.rowSpan = cell.rowSpan
@@ -1110,7 +1110,7 @@ async function genTable(node, warpObj) {
         a_sorce = 'a:lastCol'
       }
 
-      const text = genTextBody(tcNodes['a:txBody'], tcNodes, undefined, undefined, warpObj)
+      const text = genTextBody(tcNodes['a:txBody'], tcNodes, undefined, undefined, undefined, warpObj)
       const cell = await getTableCellParams(tcNodes, thisTblStyle, a_sorce, warpObj)
       const td = { text }
       if (cell.rowSpan) td.rowSpan = cell.rowSpan

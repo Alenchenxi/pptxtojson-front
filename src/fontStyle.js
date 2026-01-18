@@ -2,18 +2,67 @@ import { getTextByPathList } from './utils'
 import { getShadow } from './shadow'
 import { getFillType, getGradientFill, getSolidFill } from './fill'
 
-export function getFontType(node, type, warpObj) {
-  let typeface = getTextByPathList(node, ['a:rPr', 'a:latin', 'attrs', 'typeface'])
+export function getFontType(node, type, warpObj, slideLayoutSpNode, slideMasterSpNode, slideMasterTextStyles) {
+  const extractFont = (targetNode, isDirectRun = false) => {
+    if (!targetNode) return null
+    
+    let rPr
+    if (isDirectRun) rPr = getTextByPathList(targetNode, ['a:rPr']) 
+    else {
+      rPr = getTextByPathList(targetNode, ['p:txBody', 'a:lstStyle', 'a:lvl1pPr', 'a:defRPr'])
+      if (!rPr) rPr = getTextByPathList(targetNode, ['p:txBody', 'a:p', 'a:pPr', 'a:defRPr'])
+    }
+
+    if (!rPr) return null
+
+    return getTextByPathList(rPr, ['a:latin', 'attrs', 'typeface']) || getTextByPathList(rPr, ['a:ea', 'attrs', 'typeface'])
+  }
+
+  let typeface = extractFont(node, true)
+
+  if (!typeface) typeface = extractFont(slideLayoutSpNode)
+  if (!typeface) typeface = extractFont(slideMasterSpNode)
 
   if (!typeface) {
-    const fontSchemeNode = getTextByPathList(warpObj['themeContent'], ['a:theme', 'a:themeElements', 'a:fontScheme'])
-
-    if (type === 'title' || type === 'subTitle' || type === 'ctrTitle') {
-      typeface = getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:latin', 'attrs', 'typeface'])
+    let stylePath = []
+    if (type === 'title' || type === 'ctrTitle' || type === 'subTitle') {
+      stylePath = ['p:titleStyle', 'a:lvl1pPr', 'a:defRPr']
     } 
     else if (type === 'body') {
-      typeface = getTextByPathList(fontSchemeNode, ['a:minorFont', 'a:latin', 'attrs', 'typeface'])
+      stylePath = ['p:bodyStyle', 'a:lvl1pPr', 'a:defRPr']
     } 
+    else {
+      stylePath = ['p:otherStyle', 'a:lvl1pPr', 'a:defRPr']
+    }
+    const masterGlobalRPr = getTextByPathList(slideMasterTextStyles, stylePath)
+    if (masterGlobalRPr) {
+      typeface = getTextByPathList(masterGlobalRPr, ['a:latin', 'attrs', 'typeface']) || getTextByPathList(masterGlobalRPr, ['a:ea', 'attrs', 'typeface'])
+    }
+  }
+
+  if (!typeface || typeface.startsWith('+')) {
+    const fontSchemeNode = getTextByPathList(warpObj['themeContent'], ['a:theme', 'a:themeElements', 'a:fontScheme'])
+
+    if (fontSchemeNode) {
+      if (typeface && typeface.startsWith('+')) {
+        switch (typeface) {
+          case '+mj-lt': 
+            return getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:latin', 'attrs', 'typeface'])
+          case '+mn-lt': 
+            return getTextByPathList(fontSchemeNode, ['a:minorFont', 'a:latin', 'attrs', 'typeface'])
+          case '+mj-ea': 
+            return getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:ea', 'attrs', 'typeface'])
+          case '+mn-ea': 
+            return getTextByPathList(fontSchemeNode, ['a:minorFont', 'a:ea', 'attrs', 'typeface'])
+          default: 
+            return typeface.replace(/^\+/, '')
+        }
+      }
+    }
+
+    if (type === 'title' || type === 'subTitle' || type === 'ctrTitle') {
+      typeface = getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:latin', 'attrs', 'typeface']) || getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:ea', 'attrs', 'typeface'])
+    }
     else {
       typeface = getTextByPathList(fontSchemeNode, ['a:minorFont', 'a:latin', 'attrs', 'typeface'])
     }
