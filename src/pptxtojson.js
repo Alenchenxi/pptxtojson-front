@@ -14,6 +14,7 @@ import { RATIO_EMUs_Points } from './constants'
 import { findOMath, latexFormart, parseOMath } from './math'
 import { getShapePath } from './shapePath'
 import { parseTransition, findTransitionNode } from './animation'
+import { getSmartArtTextData } from './diagram'
 
 export async function parse(file) {
   const slides = []
@@ -125,6 +126,7 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
   let masterFilename = ''
   let themeFilename = ''
   let diagramFilename = ''
+  const diagramFiles = {}
   const slideResObj = {}
   const layoutResObj = {}
   const masterResObj = {}
@@ -154,6 +156,16 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
         break
       case 'http://schemas.microsoft.com/office/2007/relationships/diagramDrawing':
         diagramFilename = relTarget
+        slideResObj[relationshipArrayItem['attrs']['Id']] = {
+          type: relType,
+          target: relTarget
+        }
+        break
+      case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramData':
+      case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramLayout':
+      case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramQuickStyle':
+      case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramColors':
+        diagramFiles[relationshipArrayItem['attrs']['Id']] = relTarget
         slideResObj[relationshipArrayItem['attrs']['Id']] = {
           type: relType,
           target: relTarget
@@ -242,6 +254,13 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
     }
   }
 
+  const diagramContent = {
+    data: null,
+    layout: null,
+    quickStyle: null,
+    colors: null,
+    drawing: null
+  }
   let digramFileContent = {}
   if (diagramFilename) {
     const diagName = diagramFilename.split('/').pop()
@@ -261,6 +280,16 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
           'target': relationshipArrayItem['attrs']['Target'].replace('../', 'ppt/')
         }
       }
+    }
+  }
+
+  if (Object.values(diagramFiles).length > 0) {
+    for (const filePath of Object.values(diagramFiles)) {
+      const content = await readXmlFile(zip, filePath)
+      if (filePath.includes('/data')) diagramContent.data = content
+      else if (filePath.includes('/layout')) diagramContent.layout = content
+      else if (filePath.includes('/quickStyle')) diagramContent.quickStyle = content
+      else if (filePath.includes('/colors')) diagramContent.colors = content
     }
   }
 
@@ -284,6 +313,7 @@ async function processSingleSlide(zip, sldFileName, themeContent, defaultTextSty
     themeResObj,
     digramFileContent,
     diagramResObj,
+    diagramContent,
     defaultTextStyle,
   }
   const layoutElements = await getLayoutElements(warpObj)
@@ -1161,11 +1191,17 @@ async function genDiagram(node, warpObj) {
   
   const dgmDrwSpArray = getTextByPathList(warpObj['digramFileContent'], ['p:drawing', 'p:spTree', 'p:sp'])
   const elements = []
+  let textList = []
   if (dgmDrwSpArray) {
-    for (const item of dgmDrwSpArray) {
+    const spList = Array.isArray(dgmDrwSpArray) ? dgmDrwSpArray : [dgmDrwSpArray]
+
+    for (const item of spList) {
       const el = await processSpNode(item, node, warpObj, 'diagramBg')
       if (el) elements.push(el)
     }
+  }
+  else if (warpObj.diagramContent && warpObj.diagramContent.data) {
+    textList = getSmartArtTextData(warpObj.diagramContent.data)
   }
 
   return {
@@ -1175,6 +1211,7 @@ async function genDiagram(node, warpObj) {
     width,
     height,
     elements,
+    textList,
     order,
   }
 }

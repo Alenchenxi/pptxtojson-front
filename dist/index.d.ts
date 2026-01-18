@@ -251,6 +251,7 @@ export interface Diagram {
   width: number
   height: number
   elements: (Shape | Text)[]
+  textList: string[]
   order: number
 }
 

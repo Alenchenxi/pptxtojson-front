@@ -256,6 +256,7 @@ func()
 			- 宽度 `width`
 			- 高度 `height`
 			- 子元素集合 `elements`
+			- 文本列表（Smart图中的文字内容清单，仅在elements无法解析时存在） `textList`
 
 		- 多元素组合
 			- 类型 `type='group'`
