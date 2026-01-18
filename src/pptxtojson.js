@@ -1097,11 +1097,14 @@ async function genTable(node, warpObj) {
     data.push(tr)
   }
 
+  let actualTableWidth = colWidths.reduce((sum, width) => sum + width, 0)
+  if (actualTableWidth) actualTableWidth = numberToFixed(actualTableWidth)
+
   return {
     type: 'table',
     top,
     left,
-    width,
+    width: actualTableWidth || width,
     height,
     data,
     order,
