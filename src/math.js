@@ -4,8 +4,8 @@ export function findOMath(obj) {
   let results = []
   if (typeof obj !== 'object') return results
   if (obj['m:oMath']) results = results.concat(obj['m:oMath'])
-  
-  Object.values(obj).forEach(value => {
+
+  Object.values(obj).forEach((value) => {
     if (Array.isArray(value) || typeof value === 'object') {
       results = results.concat(findOMath(value))
     }
@@ -122,61 +122,78 @@ export function parseBox(box) {
   return `\\boxed{${e}}`
 }
 
-
 export function parseOMath(oMath) {
   if (!oMath) return ''
 
   if (Array.isArray(oMath)) {
-    return oMath.map(item => parseOMath(item)).join('')
+    return oMath.map((item) => parseOMath(item)).join('')
   }
 
   const oMathList = []
   const keys = Object.keys(oMath)
   for (const key of keys) {
     if (Array.isArray(oMath[key])) {
-      oMathList.push(...oMath[key].map(item => ({ key, value: item })))
-    }
-    else oMathList.push({ key, value: oMath[key] })
+      oMathList.push(...oMath[key].map((item) => ({ key, value: item })))
+    } else oMathList.push({ key, value: oMath[key] })
   }
 
   oMathList.sort((a, b) => {
     let oA = 0
     if (a.key === 'm:r' && a.value && a.value['a:rPr']) oA = a.value['a:rPr']['attrs']['order']
-    else if (a.value[`${a.key}Pr`] && a.value[`${a.key}Pr`]['m:ctrlPr'] && a.value[`${a.key}Pr`]['m:ctrlPr']['a:rPr']) {
-      oA = a.value[`${a.key}Pr`] && a.value[`${a.key}Pr`]['m:ctrlPr'] && a.value[`${a.key}Pr`]['m:ctrlPr']['a:rPr'] && a.value[`${a.key}Pr`]['m:ctrlPr']['a:rPr']['attrs']['order']
+    else if (
+      a.value[`${a.key}Pr`] &&
+      a.value[`${a.key}Pr`]['m:ctrlPr'] &&
+      a.value[`${a.key}Pr`]['m:ctrlPr']['a:rPr']
+    ) {
+      oA =
+        a.value[`${a.key}Pr`] &&
+        a.value[`${a.key}Pr`]['m:ctrlPr'] &&
+        a.value[`${a.key}Pr`]['m:ctrlPr']['a:rPr'] &&
+        a.value[`${a.key}Pr`]['m:ctrlPr']['a:rPr']['attrs']['order']
     }
     let oB = 0
     if (b.key === 'm:r' && b.value && b.value['a:rPr']) oB = b.value['a:rPr']['attrs']['order']
-    else if (b.value[`${b.key}Pr`] && b.value[`${b.key}Pr`]['m:ctrlPr'] && b.value[`${b.key}Pr`]['m:ctrlPr']['a:rPr']) {
-      oB = b.value[`${b.key}Pr`] && b.value[`${b.key}Pr`]['m:ctrlPr'] && b.value[`${b.key}Pr`]['m:ctrlPr']['a:rPr'] && b.value[`${b.key}Pr`]['m:ctrlPr']['a:rPr']['attrs']['order']
+    else if (
+      b.value[`${b.key}Pr`] &&
+      b.value[`${b.key}Pr`]['m:ctrlPr'] &&
+      b.value[`${b.key}Pr`]['m:ctrlPr']['a:rPr']
+    ) {
+      oB =
+        b.value[`${b.key}Pr`] &&
+        b.value[`${b.key}Pr`]['m:ctrlPr'] &&
+        b.value[`${b.key}Pr`]['m:ctrlPr']['a:rPr'] &&
+        b.value[`${b.key}Pr`]['m:ctrlPr']['a:rPr']['attrs']['order']
     }
     return oA - oB
   })
 
-  return oMathList.map(({ key, value }) => {
-    if (key === 'm:f') return parseFraction(value)
-    if (key === 'm:sSup') return parseSuperscript(value)
-    if (key === 'm:sSub') return parseSubscript(value)
-    if (key === 'm:rad') return parseRadical(value)
-    if (key === 'm:nary') return parseNary(value)
-    if (key === 'm:limLow') return parseLimit(value, 'low')
-    if (key === 'm:limUpp') return parseLimit(value, 'upp')
-    if (key === 'm:d') return parseDelimiter(value)
-    if (key === 'm:func') return parseFunction(value)
-    if (key === 'm:groupChr') return parseGroupChr(value)
-    if (key === 'm:eqArr') return parseEqArr(value)
-    if (key === 'm:bar') return parseBar(value)
-    if (key === 'm:acc') return parseAccent(value)
-    if (key === 'm:borderBox') return parseBox(value)
-    if (key === 'm:m') return parseMatrix(value)
-    if (key === 'm:r') return parseOMath(value)
-    if (key === 'm:t') return value
-    return ''
-  }).join('')
+  return oMathList
+    .map(({ key, value }) => {
+      if (key === 'm:f') return parseFraction(value)
+      if (key === 'm:sSup') return parseSuperscript(value)
+      if (key === 'm:sSub') return parseSubscript(value)
+      if (key === 'm:rad') return parseRadical(value)
+      if (key === 'm:nary') return parseNary(value)
+      if (key === 'm:limLow') return parseLimit(value, 'low')
+      if (key === 'm:limUpp') return parseLimit(value, 'upp')
+      if (key === 'm:d') return parseDelimiter(value)
+      if (key === 'm:func') return parseFunction(value)
+      if (key === 'm:groupChr') return parseGroupChr(value)
+      if (key === 'm:eqArr') return parseEqArr(value)
+      if (key === 'm:bar') return parseBar(value)
+      if (key === 'm:acc') return parseAccent(value)
+      if (key === 'm:borderBox') return parseBox(value)
+      if (key === 'm:m') return parseMatrix(value)
+      if (key === 'm:r') return parseOMath(value)
+      if (key === 'm:t') return value
+      return ''
+    })
+    .join('')
 }
 
 export function latexFormart(latex) {
-  return latex.replaceAll(/&lt;/g, '<')
+  return latex
+    .replaceAll(/&lt;/g, '<')
     .replaceAll(/&gt;/g, '>')
     .replaceAll(/&amp;/g, '&')
     .replaceAll(/&apos;/g, "'")

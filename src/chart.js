@@ -1,23 +1,39 @@
-import { eachElement, getTextByPathList } from './utils'
 import { applyTint } from './color'
+import { eachElement, getTextByPathList } from './utils'
 
 function extractChartColors(serNode, warpObj) {
   if (serNode.constructor !== Array) serNode = [serNode]
   const schemeClrs = []
   for (const node of serNode) {
     let schemeClr = getTextByPathList(node, ['c:spPr', 'a:solidFill', 'a:schemeClr'])
-    if (!schemeClr) schemeClr = getTextByPathList(node, ['c:spPr', 'a:ln', 'a:solidFill', 'a:schemeClr'])
-    if (!schemeClr) schemeClr = getTextByPathList(node, ['c:marker', 'c:spPr', 'a:ln', 'a:solidFill', 'a:schemeClr'])
-
+    if (!schemeClr) {
+      schemeClr = getTextByPathList(node, ['c:spPr', 'a:ln', 'a:solidFill', 'a:schemeClr'])
+    }
+    if (!schemeClr) {
+      schemeClr = getTextByPathList(node, [
+        'c:marker',
+        'c:spPr',
+        'a:ln',
+        'a:solidFill',
+        'a:schemeClr',
+      ])
+    }
     let clr = getTextByPathList(schemeClr, ['attrs', 'val'])
     if (clr) {
-      clr = getTextByPathList(warpObj['themeContent'], ['a:theme', 'a:themeElements', 'a:clrScheme', `a:${clr}`, 'a:srgbClr', 'attrs', 'val'])
+      clr = getTextByPathList(warpObj['themeContent'], [
+        'a:theme',
+        'a:themeElements',
+        'a:clrScheme',
+        `a:${clr}`,
+        'a:srgbClr',
+        'attrs',
+        'val',
+      ])
       const tint = getTextByPathList(schemeClr, ['a:tint', 'attrs', 'val']) / 100000
       if (clr && !isNaN(tint)) {
         clr = applyTint(clr, tint)
       }
-    }
-    else clr = getTextByPathList(node, ['c:spPr', 'a:solidFill', 'a:srgbClr', 'attrs', 'val'])
+    } else clr = getTextByPathList(node, ['c:spPr', 'a:solidFill', 'a:srgbClr', 'attrs', 'val'])
 
     if (clr) clr = '#' + clr
     schemeClrs.push(clr)
@@ -31,39 +47,38 @@ function extractChartData(serNode) {
 
   if (serNode['c:xVal']) {
     let dataRow = []
-    eachElement(serNode['c:xVal']['c:numRef']['c:numCache']['c:pt'], innerNode => {
+    eachElement(serNode['c:xVal']['c:numRef']['c:numCache']['c:pt'], (innerNode) => {
       dataRow.push(parseFloat(innerNode['c:v']))
       return ''
     })
     dataMat.push(dataRow)
     dataRow = []
-    eachElement(serNode['c:yVal']['c:numRef']['c:numCache']['c:pt'], innerNode => {
+    eachElement(serNode['c:yVal']['c:numRef']['c:numCache']['c:pt'], (innerNode) => {
       dataRow.push(parseFloat(innerNode['c:v']))
       return ''
     })
     dataMat.push(dataRow)
-  } 
-  else {
+  } else {
     eachElement(serNode, (innerNode, index) => {
       const dataRow = []
-      const colName = getTextByPathList(innerNode, ['c:tx', 'c:strRef', 'c:strCache', 'c:pt', 'c:v']) || index
+      const colName =
+        getTextByPathList(innerNode, ['c:tx', 'c:strRef', 'c:strCache', 'c:pt', 'c:v']) || index
 
       const rowNames = {}
       if (getTextByPathList(innerNode, ['c:cat', 'c:strRef', 'c:strCache', 'c:pt'])) {
-        eachElement(innerNode['c:cat']['c:strRef']['c:strCache']['c:pt'], innerNode => {
+        eachElement(innerNode['c:cat']['c:strRef']['c:strCache']['c:pt'], (innerNode) => {
           rowNames[innerNode['attrs']['idx']] = innerNode['c:v']
           return ''
         })
-      } 
-      else if (getTextByPathList(innerNode, ['c:cat', 'c:numRef', 'c:numCache', 'c:pt'])) {
-        eachElement(innerNode['c:cat']['c:numRef']['c:numCache']['c:pt'], innerNode => {
+      } else if (getTextByPathList(innerNode, ['c:cat', 'c:numRef', 'c:numCache', 'c:pt'])) {
+        eachElement(innerNode['c:cat']['c:numRef']['c:numCache']['c:pt'], (innerNode) => {
           rowNames[innerNode['attrs']['idx']] = innerNode['c:v']
           return ''
         })
       }
 
       if (getTextByPathList(innerNode, ['c:val', 'c:numRef', 'c:numCache', 'c:pt'])) {
-        eachElement(innerNode['c:val']['c:numRef']['c:numCache']['c:pt'], innerNode => {
+        eachElement(innerNode['c:val']['c:numRef']['c:numCache']['c:pt'], (innerNode) => {
           dataRow.push({
             x: innerNode['attrs']['idx'],
             y: parseFloat(innerNode['c:v']),

@@ -1,13 +1,20 @@
-import { getTextByPathList } from './utils'
-import { getShadow } from './shadow'
 import { getFillType, getGradientFill, getSolidFill } from './fill'
+import { getShadow } from './shadow'
+import { getTextByPathList } from './utils'
 
-export function getFontType(node, type, warpObj, slideLayoutSpNode, slideMasterSpNode, slideMasterTextStyles) {
+export function getFontType(
+  node,
+  type,
+  warpObj,
+  slideLayoutSpNode,
+  slideMasterSpNode,
+  slideMasterTextStyles
+) {
   const extractFont = (targetNode, isDirectRun = false) => {
     if (!targetNode) return null
-    
+
     let rPr
-    if (isDirectRun) rPr = getTextByPathList(targetNode, ['a:rPr']) 
+    if (isDirectRun) rPr = getTextByPathList(targetNode, ['a:rPr'])
     else {
       rPr = getTextByPathList(targetNode, ['p:txBody', 'a:lstStyle', 'a:lvl1pPr', 'a:defRPr'])
       if (!rPr) rPr = getTextByPathList(targetNode, ['p:txBody', 'a:p', 'a:pPr', 'a:defRPr'])
@@ -15,7 +22,10 @@ export function getFontType(node, type, warpObj, slideLayoutSpNode, slideMasterS
 
     if (!rPr) return null
 
-    return getTextByPathList(rPr, ['a:latin', 'attrs', 'typeface']) || getTextByPathList(rPr, ['a:ea', 'attrs', 'typeface'])
+    return (
+      getTextByPathList(rPr, ['a:latin', 'attrs', 'typeface']) ||
+      getTextByPathList(rPr, ['a:ea', 'attrs', 'typeface'])
+    )
   }
 
   let typeface = extractFont(node, true)
@@ -27,43 +37,58 @@ export function getFontType(node, type, warpObj, slideLayoutSpNode, slideMasterS
     let stylePath = []
     if (type === 'title' || type === 'ctrTitle' || type === 'subTitle') {
       stylePath = ['p:titleStyle', 'a:lvl1pPr', 'a:defRPr']
-    } 
-    else if (type === 'body') {
+    } else if (type === 'body') {
       stylePath = ['p:bodyStyle', 'a:lvl1pPr', 'a:defRPr']
-    } 
-    else {
+    } else {
       stylePath = ['p:otherStyle', 'a:lvl1pPr', 'a:defRPr']
     }
     const masterGlobalRPr = getTextByPathList(slideMasterTextStyles, stylePath)
     if (masterGlobalRPr) {
-      typeface = getTextByPathList(masterGlobalRPr, ['a:latin', 'attrs', 'typeface']) || getTextByPathList(masterGlobalRPr, ['a:ea', 'attrs', 'typeface'])
+      typeface =
+        getTextByPathList(masterGlobalRPr, ['a:latin', 'attrs', 'typeface']) ||
+        getTextByPathList(masterGlobalRPr, ['a:ea', 'attrs', 'typeface'])
     }
   }
 
   if (!typeface || typeface.startsWith('+')) {
-    const fontSchemeNode = getTextByPathList(warpObj['themeContent'], ['a:theme', 'a:themeElements', 'a:fontScheme'])
+    const fontSchemeNode = getTextByPathList(warpObj['themeContent'], [
+      'a:theme',
+      'a:themeElements',
+      'a:fontScheme',
+    ])
 
     if (fontSchemeNode) {
       if (typeface && typeface.startsWith('+')) {
         switch (typeface) {
-          case '+mj-lt': 
-            return getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:latin', 'attrs', 'typeface'])
-          case '+mn-lt': 
-            return getTextByPathList(fontSchemeNode, ['a:minorFont', 'a:latin', 'attrs', 'typeface'])
-          case '+mj-ea': 
+          case '+mj-lt':
+            return getTextByPathList(fontSchemeNode, [
+              'a:majorFont',
+              'a:latin',
+              'attrs',
+              'typeface',
+            ])
+          case '+mn-lt':
+            return getTextByPathList(fontSchemeNode, [
+              'a:minorFont',
+              'a:latin',
+              'attrs',
+              'typeface',
+            ])
+          case '+mj-ea':
             return getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:ea', 'attrs', 'typeface'])
-          case '+mn-ea': 
+          case '+mn-ea':
             return getTextByPathList(fontSchemeNode, ['a:minorFont', 'a:ea', 'attrs', 'typeface'])
-          default: 
+          default:
             return typeface.replace(/^\+/, '')
         }
       }
     }
 
     if (type === 'title' || type === 'subTitle' || type === 'ctrTitle') {
-      typeface = getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:latin', 'attrs', 'typeface']) || getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:ea', 'attrs', 'typeface'])
-    }
-    else {
+      typeface =
+        getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:latin', 'attrs', 'typeface']) ||
+        getTextByPathList(fontSchemeNode, ['a:majorFont', 'a:ea', 'attrs', 'typeface'])
+    } else {
       typeface = getTextByPathList(fontSchemeNode, ['a:minorFont', 'a:latin', 'attrs', 'typeface'])
     }
   }
@@ -102,10 +127,19 @@ export function getFontColor(node, pNode, lstStyle, pFontStyle, lvl, warpObj) {
   return color || ''
 }
 
-export function getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles, textBodyNode, pNode) {
+export function getFontSize(
+  node,
+  slideLayoutSpNode,
+  type,
+  slideMasterTextStyles,
+  textBodyNode,
+  pNode
+) {
   let fontSize
 
-  if (getTextByPathList(node, ['a:rPr', 'attrs', 'sz'])) fontSize = getTextByPathList(node, ['a:rPr', 'attrs', 'sz']) / 100
+  if (getTextByPathList(node, ['a:rPr', 'attrs', 'sz'])) {
+    fontSize = getTextByPathList(node, ['a:rPr', 'attrs', 'sz']) / 100
+  }
 
   if ((isNaN(fontSize) || !fontSize) && pNode) {
     if (getTextByPathList(pNode, ['a:endParaRPr', 'attrs', 'sz'])) {
@@ -127,8 +161,15 @@ export function getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles
     }
   }
 
-  if ((isNaN(fontSize) || !fontSize)) {
-    const sz = getTextByPathList(slideLayoutSpNode, ['p:txBody', 'a:lstStyle', 'a:lvl1pPr', 'a:defRPr', 'attrs', 'sz'])
+  if (isNaN(fontSize) || !fontSize) {
+    const sz = getTextByPathList(slideLayoutSpNode, [
+      'p:txBody',
+      'a:lstStyle',
+      'a:lvl1pPr',
+      'a:defRPr',
+      'attrs',
+      'sz',
+    ])
     if (sz) fontSize = parseInt(sz) / 100
   }
 
@@ -138,7 +179,14 @@ export function getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles
       const lvlNode = getTextByPathList(pNode, ['a:pPr', 'attrs', 'lvl'])
       if (lvlNode !== undefined) lvl = parseInt(lvlNode) + 1
     }
-    const layoutSz = getTextByPathList(slideLayoutSpNode, ['p:txBody', 'a:lstStyle', `a:lvl${lvl}pPr`, 'a:defRPr', 'attrs', 'sz'])
+    const layoutSz = getTextByPathList(slideLayoutSpNode, [
+      'p:txBody',
+      'a:lstStyle',
+      `a:lvl${lvl}pPr`,
+      'a:defRPr',
+      'attrs',
+      'sz',
+    ])
     if (layoutSz) fontSize = parseInt(layoutSz) / 100
   }
 
@@ -150,16 +198,31 @@ export function getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles
   if (isNaN(fontSize) || !fontSize) {
     let sz
     if (type === 'title' || type === 'subTitle' || type === 'ctrTitle') {
-      sz = getTextByPathList(slideMasterTextStyles, ['p:titleStyle', 'a:lvl1pPr', 'a:defRPr', 'attrs', 'sz'])
-    } 
-    else if (type === 'body') {
-      sz = getTextByPathList(slideMasterTextStyles, ['p:bodyStyle', 'a:lvl1pPr', 'a:defRPr', 'attrs', 'sz'])
-    } 
-    else if (type === 'dt' || type === 'sldNum') {
+      sz = getTextByPathList(slideMasterTextStyles, [
+        'p:titleStyle',
+        'a:lvl1pPr',
+        'a:defRPr',
+        'attrs',
+        'sz',
+      ])
+    } else if (type === 'body') {
+      sz = getTextByPathList(slideMasterTextStyles, [
+        'p:bodyStyle',
+        'a:lvl1pPr',
+        'a:defRPr',
+        'attrs',
+        'sz',
+      ])
+    } else if (type === 'dt' || type === 'sldNum') {
       sz = '1200'
-    } 
-    else if (!type) {
-      sz = getTextByPathList(slideMasterTextStyles, ['p:otherStyle', 'a:lvl1pPr', 'a:defRPr', 'attrs', 'sz'])
+    } else if (!type) {
+      sz = getTextByPathList(slideMasterTextStyles, [
+        'p:otherStyle',
+        'a:lvl1pPr',
+        'a:defRPr',
+        'attrs',
+        'sz',
+      ])
     }
     if (sz) fontSize = parseInt(sz) / 100
   }
@@ -167,7 +230,7 @@ export function getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles
   const baseline = getTextByPathList(node, ['a:rPr', 'attrs', 'baseline'])
   if (baseline && !isNaN(fontSize)) fontSize -= 10
 
-  fontSize = (isNaN(fontSize) || !fontSize) ? 18 : fontSize
+  fontSize = isNaN(fontSize) || !fontSize ? 18 : fontSize
 
   return fontSize + 'pt'
 }
@@ -190,7 +253,7 @@ export function getFontDecorationLine(node) {
 
 export function getFontSpace(node) {
   const spc = getTextByPathList(node, ['a:rPr', 'attrs', 'spc'])
-  return spc ? (parseInt(spc) / 100 + 'pt') : ''
+  return spc ? parseInt(spc) / 100 + 'pt' : ''
 }
 
 export function getFontSubscript(node) {

@@ -4,7 +4,7 @@ export function base64ArrayBuffer(arrayBuffer) {
   const byteLength = bytes.byteLength
   const byteRemainder = byteLength % 3
   const mainLength = byteLength - byteRemainder
-  
+
   let base64 = ''
   let a, b, c, d
   let chunk
@@ -23,8 +23,7 @@ export function base64ArrayBuffer(arrayBuffer) {
     a = (chunk & 252) >> 2
     b = (chunk & 3) << 4
     base64 += encodings[a] + encodings[b] + '=='
-  } 
-  else if (byteRemainder === 2) {
+  } else if (byteRemainder === 2) {
     chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
     a = (chunk & 64512) >> 10
     b = (chunk & 1008) >> 4
@@ -47,8 +46,7 @@ export function eachElement(node, func) {
     for (let i = 0; i < node.length; i++) {
       result += func(node[i], i)
     }
-  } 
-  else result += func(node, 0)
+  } else result += func(node, 0)
 
   return result
 }
@@ -77,7 +75,7 @@ export function escapeHtml(text) {
     '"': '&quot;',
     "'": '&#039;',
   }
-  return text.replace(/[&<>"']/g, m => map[m])
+  return text.replace(/[&<>"']/g, (m) => map[m])
 }
 
 export function getMimeType(imgFileExt) {
@@ -138,7 +136,8 @@ export function getMimeType(imgFileExt) {
 }
 
 export function isVideoLink(vdoFile) {
-  const urlRegex = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/
+  const urlRegex =
+    /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/
   return urlRegex.test(vdoFile)
 }
 

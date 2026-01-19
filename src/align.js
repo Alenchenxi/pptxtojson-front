@@ -12,18 +12,66 @@ export function getHorizontalAlign(node, pNode, type, warpObj) {
         lvlIdx = parseInt(lvlNode) + 1
       }
       const lvlStr = 'a:lvl' + lvlIdx + 'pPr'
-      algn = getTextByPathList(warpObj, ['slideLayoutTables', 'typeTable', type, 'p:txBody', 'a:lstStyle', lvlStr, 'attrs', 'algn'])
-      if (!algn) algn = getTextByPathList(warpObj, ['slideMasterTables', 'typeTable', type, 'p:txBody', 'a:lstStyle', lvlStr, 'attrs', 'algn'])
-      if (!algn) algn = getTextByPathList(warpObj, ['slideMasterTextStyles', 'p:titleStyle', lvlStr, 'attrs', 'algn'])
-      if (!algn && type === 'subTitle') {
-        algn = getTextByPathList(warpObj, ['slideMasterTextStyles', 'p:bodyStyle', lvlStr, 'attrs', 'algn'])
+      algn = getTextByPathList(warpObj, [
+        'slideLayoutTables',
+        'typeTable',
+        type,
+        'p:txBody',
+        'a:lstStyle',
+        lvlStr,
+        'attrs',
+        'algn',
+      ])
+      if (!algn) {
+        algn = getTextByPathList(warpObj, [
+          'slideMasterTables',
+          'typeTable',
+          type,
+          'p:txBody',
+          'a:lstStyle',
+          lvlStr,
+          'attrs',
+          'algn',
+        ])
       }
-    } 
-    else if (type === 'body') {
-      algn = getTextByPathList(warpObj, ['slideMasterTextStyles', 'p:bodyStyle', 'a:lvl1pPr', 'attrs', 'algn'])
-    } 
-    else {
-      algn = getTextByPathList(warpObj, ['slideMasterTables', 'typeTable', type, 'p:txBody', 'a:lstStyle', 'a:lvl1pPr', 'attrs', 'algn'])
+      if (!algn) {
+        algn = getTextByPathList(warpObj, [
+          'slideMasterTextStyles',
+          'p:titleStyle',
+          lvlStr,
+          'attrs',
+          'algn',
+        ])
+      }
+
+      if (!algn && type === 'subTitle') {
+        algn = getTextByPathList(warpObj, [
+          'slideMasterTextStyles',
+          'p:bodyStyle',
+          lvlStr,
+          'attrs',
+          'algn',
+        ])
+      }
+    } else if (type === 'body') {
+      algn = getTextByPathList(warpObj, [
+        'slideMasterTextStyles',
+        'p:bodyStyle',
+        'a:lvl1pPr',
+        'attrs',
+        'algn',
+      ])
+    } else {
+      algn = getTextByPathList(warpObj, [
+        'slideMasterTables',
+        'typeTable',
+        type,
+        'p:txBody',
+        'a:lstStyle',
+        'a:lvl1pPr',
+        'attrs',
+        'algn',
+      ])
     }
   }
 
@@ -61,7 +109,7 @@ export function getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode) {
       if (!anchor) anchor = 't'
     }
   }
-  return (anchor === 'ctr') ? 'mid' : ((anchor === 'b') ? 'down' : 'up')
+  return anchor === 'ctr' ? 'mid' : anchor === 'b' ? 'down' : 'up'
 }
 
 export function getTextAutoFit(node, slideLayoutSpNode, slideMasterSpNode) {
@@ -78,7 +126,7 @@ export function getTextAutoFit(node, slideLayoutSpNode, slideMasterSpNode) {
           result: {
             type: 'text',
             fontScale: scalePercent,
-          }
+          },
         }
       }
       return { result: { type: 'text' } }
@@ -113,8 +161,7 @@ export function getParagraphSpacing(pNode) {
 
     if (spcPct) {
       spacing.lineSpacing = parseInt(spcPct) / 1000 / 100
-    } 
-    else if (spcPts) {
+    } else if (spcPts) {
       spacing.lineSpacing = parseInt(spcPts) / 100 + 'pt'
     }
   }
@@ -126,8 +173,7 @@ export function getParagraphSpacing(pNode) {
 
     if (spcPct) {
       spacing.spaceBefore = parseInt(spcPct) / 1000 + 'em'
-    } 
-    else if (spcPts) {
+    } else if (spcPts) {
       spacing.spaceBefore = parseInt(spcPts) / 100 + 'pt'
     }
   }
@@ -139,8 +185,7 @@ export function getParagraphSpacing(pNode) {
 
     if (spcPct) {
       spacing.spaceAfter = parseInt(spcPct) / 1000 + 'em'
-    } 
-    else if (spcPts) {
+    } else if (spcPts) {
       spacing.spaceAfter = parseInt(spcPts) / 100 + 'pt'
     }
   }

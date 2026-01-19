@@ -2,16 +2,31 @@ import { getTextByPathList } from './utils'
 
 export function getSchemeColorFromTheme(schemeClr, warpObj, clrMap, phClr) {
   let color
+
   let slideLayoutClrOvride
   if (clrMap) slideLayoutClrOvride = clrMap
   else {
-    let sldClrMapOvr = getTextByPathList(warpObj['slideContent'], ['p:sld', 'p:clrMapOvr', 'a:overrideClrMapping', 'attrs'])
+    let sldClrMapOvr = getTextByPathList(warpObj['slideContent'], [
+      'p:sld',
+      'p:clrMapOvr',
+      'a:overrideClrMapping',
+      'attrs',
+    ])
     if (sldClrMapOvr) slideLayoutClrOvride = sldClrMapOvr
     else {
-      sldClrMapOvr = getTextByPathList(warpObj['slideLayoutContent'], ['p:sldLayout', 'p:clrMapOvr', 'a:overrideClrMapping', 'attrs'])
+      sldClrMapOvr = getTextByPathList(warpObj['slideLayoutContent'], [
+        'p:sldLayout',
+        'p:clrMapOvr',
+        'a:overrideClrMapping',
+        'attrs',
+      ])
       if (sldClrMapOvr) slideLayoutClrOvride = sldClrMapOvr
       else {
-        slideLayoutClrOvride = getTextByPathList(warpObj['slideMasterContent'], ['p:sldMaster', 'p:clrMap', 'attrs'])
+        slideLayoutClrOvride = getTextByPathList(warpObj['slideMasterContent'], [
+          'p:sldMaster',
+          'p:clrMap',
+          'attrs',
+        ])
       }
     }
   }
@@ -29,8 +44,7 @@ export function getSchemeColorFromTheme(schemeClr, warpObj, clrMap, phClr) {
         default:
           break
       }
-    }
-    else {
+    } else {
       switch (schemeClr) {
         case 'tx1':
           schemeClr = 'a:dk1'
@@ -48,7 +62,12 @@ export function getSchemeColorFromTheme(schemeClr, warpObj, clrMap, phClr) {
           break
       }
     }
-    const refNode = getTextByPathList(warpObj['themeContent'], ['a:theme', 'a:themeElements', 'a:clrScheme', schemeClr])
+    const refNode = getTextByPathList(warpObj['themeContent'], [
+      'a:theme',
+      'a:themeElements',
+      'a:clrScheme',
+      schemeClr,
+    ])
     color = getTextByPathList(refNode, ['a:srgbClr', 'attrs', 'val'])
     if (!color && refNode) color = getTextByPathList(refNode, ['a:sysClr', 'attrs', 'lastClr'])
   }

@@ -7,10 +7,12 @@ export function simplifyLostLess(children, parentAttributes = {}) {
   if (!children.length) return out
 
   if (children.length === 1 && typeof children[0] === 'string') {
-    return Object.keys(parentAttributes).length ? {
-      attrs: { order: cust_attr_order++, ...parentAttributes },
-      value: children[0],
-    } : children[0]
+    return Object.keys(parentAttributes).length
+      ? {
+          attrs: { order: cust_attr_order++, ...parentAttributes },
+          value: children[0],
+        }
+      : children[0]
   }
   for (const child of children) {
     if (typeof child !== 'object') return
@@ -19,7 +21,7 @@ export function simplifyLostLess(children, parentAttributes = {}) {
     if (!out[child.tagName]) out[child.tagName] = []
 
     const kids = simplifyLostLess(child.children || [], child.attributes)
-    
+
     if (typeof kids === 'object') {
       if (!kids.attrs) kids.attrs = { order: cust_attr_order++ }
       else kids.attrs.order = cust_attr_order++

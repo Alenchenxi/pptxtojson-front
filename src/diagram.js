@@ -18,12 +18,12 @@ export function getSmartArtTextData(dataContent) {
       if (paragraphs) {
         if (!Array.isArray(paragraphs)) paragraphs = [paragraphs]
 
-        paragraphs.forEach(p => {
+        paragraphs.forEach((p) => {
           let runs = getTextByPathList(p, ['a:r'])
           if (runs) {
             if (!Array.isArray(runs)) runs = [runs]
 
-            runs.forEach(r => {
+            runs.forEach((r) => {
               const t = getTextByPathList(r, ['a:t'])
               if (t && typeof t === 'string') nodeText += t
             })

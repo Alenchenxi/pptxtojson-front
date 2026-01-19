@@ -13,7 +13,7 @@ export function findTransitionNode(content, rootElement) {
 
   const path3 = [rootElement, 'mc:AlternateContent', 'mc:Fallback', 'p:transition']
   transitionNode = getTextByPathList(content, path3)
-  
+
   return transitionNode
 }
 
@@ -29,7 +29,7 @@ export function parseTransition(transitionNode) {
   const attrs = transitionNode.attrs || {}
 
   let durationFound = false
-  const durRegex = /^p\d{2}:dur$/ 
+  const durRegex = /^p\d{2}:dur$/
   for (const key in attrs) {
     if (durRegex.test(key) && !isNaN(parseInt(attrs[key], 10))) {
       transition.duration = parseInt(attrs[key], 10)
@@ -59,7 +59,7 @@ export function parseTransition(transitionNode) {
     transition.autoNextAfter = parseInt(attrs.advTm, 10)
   }
 
-  const effectRegex = /^(p|p\d{2}):/ 
+  const effectRegex = /^(p|p\d{2}):/
   for (const key in transitionNode) {
     if (key !== 'attrs' && effectRegex.test(key)) {
       const effectNode = transitionNode[key]
@@ -67,7 +67,7 @@ export function parseTransition(transitionNode) {
 
       if (effectNode && effectNode.attrs) {
         const effectAttrs = effectNode.attrs
-        
+
         if (effectAttrs.dur && !isNaN(parseInt(effectAttrs.dur, 10))) {
           if (!durationFound) transition.duration = parseInt(effectAttrs.dur, 10)
         }

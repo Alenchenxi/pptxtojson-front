@@ -14,7 +14,14 @@ import {
   getFontShadow,
 } from './fontStyle'
 
-export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterSpNode, type, warpObj) {
+export function genTextBody(
+  textBodyNode,
+  spNode,
+  slideLayoutSpNode,
+  slideMasterSpNode,
+  type,
+  warpObj
+) {
   if (!textBodyNode) return ''
 
   let text = ''
@@ -31,16 +38,16 @@ export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMaster
     let fldNode = pNode['a:fld']
     let brNode = pNode['a:br']
     if (rNode) {
-      rNode = (rNode.constructor === Array) ? rNode : [rNode]
+      rNode = rNode.constructor === Array ? rNode : [rNode]
 
       if (fldNode) {
-        fldNode = (fldNode.constructor === Array) ? fldNode : [fldNode]
+        fldNode = fldNode.constructor === Array ? fldNode : [fldNode]
         rNode = rNode.concat(fldNode)
       }
       if (brNode) {
-        brNode = (brNode.constructor === Array) ? brNode : [brNode]
-        brNode.forEach(item => item.type = 'br')
-  
+        brNode = brNode.constructor === Array ? brNode : [brNode]
+        brNode.forEach((item) => (item.type = 'br'))
+
         if (brNode.length > 1) brNode.shift()
         rNode = rNode.concat(brNode)
         rNode.sort((a, b) => {
@@ -72,54 +79,78 @@ export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMaster
       if (listTypes[listLevel] === undefined) {
         text += `<${listType}>`
         listTypes[listLevel] = listType
-      }
-      else if (listTypes[listLevel] !== listType) {
+      } else if (listTypes[listLevel] !== listType) {
         text += `</${listTypes[listLevel]}>`
         text += `<${listType}>`
         listTypes[listLevel] = listType
       }
       text += `<li style="${styleText}">`
-    }
-    else {
+    } else {
       while (listTypes.length > 0) {
         const closedListType = listTypes.pop()
         text += `</${closedListType}>`
       }
       text += `<p style="${styleText}">`
     }
-    
+
     if (!rNode) {
-      text += genSpanElement(pNode, spNode, textBodyNode, pFontStyle, slideLayoutSpNode, slideMasterSpNode, type, warpObj)
-    } 
-    else {
+      text += genSpanElement(
+        pNode,
+        spNode,
+        textBodyNode,
+        pFontStyle,
+        slideLayoutSpNode,
+        slideMasterSpNode,
+        type,
+        warpObj
+      )
+    } else {
       let prevStyleInfo = null
       let accumulatedText = ''
 
       for (const rNodeItem of rNode) {
-        const styleInfo = getSpanStyleInfo(rNodeItem, pNode, textBodyNode, pFontStyle, slideLayoutSpNode, slideMasterSpNode, type, warpObj)
+        const styleInfo = getSpanStyleInfo(
+          rNodeItem,
+          pNode,
+          textBodyNode,
+          pFontStyle,
+          slideLayoutSpNode,
+          slideMasterSpNode,
+          type,
+          warpObj
+        )
 
-        if (!prevStyleInfo || prevStyleInfo.styleText !== styleInfo.styleText || prevStyleInfo.hasLink !== styleInfo.hasLink || styleInfo.hasLink) {
+        if (
+          !prevStyleInfo ||
+          prevStyleInfo.styleText !== styleInfo.styleText ||
+          prevStyleInfo.hasLink !== styleInfo.hasLink ||
+          styleInfo.hasLink
+        ) {
           if (accumulatedText) {
-            const processedText = accumulatedText.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s/g, '&nbsp;')
+            const processedText = accumulatedText
+              .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+              .replace(/\s/g, '&nbsp;')
             text += `<span style="${prevStyleInfo.styleText}">${processedText}</span>`
             accumulatedText = ''
           }
 
           if (styleInfo.hasLink) {
-            const processedText = styleInfo.text.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s/g, '&nbsp;')
+            const processedText = styleInfo.text
+              .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+              .replace(/\s/g, '&nbsp;')
             text += `<span style="${styleInfo.styleText}"><a href="${styleInfo.linkURL}" target="_blank">${processedText}</a></span>`
             prevStyleInfo = null
-          } 
-          else {
+          } else {
             prevStyleInfo = styleInfo
             accumulatedText = styleInfo.text
           }
-        } 
-        else accumulatedText += styleInfo.text
+        } else accumulatedText += styleInfo.text
       }
 
       if (accumulatedText && prevStyleInfo) {
-        const processedText = accumulatedText.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s/g, '&nbsp;')
+        const processedText = accumulatedText
+          .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+          .replace(/\s/g, '&nbsp;')
         text += `<span style="${prevStyleInfo.styleText}">${processedText}</span>`
       }
     }
@@ -140,7 +171,7 @@ export function getListType(node) {
 
   if (pPrNode['a:buChar']) return 'ul'
   if (pPrNode['a:buAutoNum']) return 'ol'
-  
+
   return ''
 }
 export function getListLevel(node) {
@@ -153,8 +184,26 @@ export function getListLevel(node) {
   return 0
 }
 
-export function genSpanElement(node, pNode, textBodyNode, pFontStyle, slideLayoutSpNode, slideMasterSpNode, type, warpObj) {
-  const { styleText, text, hasLink, linkURL } = getSpanStyleInfo(node, pNode, textBodyNode, pFontStyle, slideLayoutSpNode, slideMasterSpNode, type, warpObj)
+export function genSpanElement(
+  node,
+  pNode,
+  textBodyNode,
+  pFontStyle,
+  slideLayoutSpNode,
+  slideMasterSpNode,
+  type,
+  warpObj
+) {
+  const { styleText, text, hasLink, linkURL } = getSpanStyleInfo(
+    node,
+    pNode,
+    textBodyNode,
+    pFontStyle,
+    slideLayoutSpNode,
+    slideMasterSpNode,
+    type,
+    warpObj
+  )
   const processedText = text.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s/g, '&nbsp;')
 
   if (hasLink) {
@@ -163,7 +212,16 @@ export function genSpanElement(node, pNode, textBodyNode, pFontStyle, slideLayou
   return `<span style="${styleText}">${processedText}</span>`
 }
 
-export function getSpanStyleInfo(node, pNode, textBodyNode, pFontStyle, slideLayoutSpNode, slideMasterSpNode, type, warpObj) {
+export function getSpanStyleInfo(
+  node,
+  pNode,
+  textBodyNode,
+  pFontStyle,
+  slideLayoutSpNode,
+  slideMasterSpNode,
+  type,
+  warpObj
+) {
   const lstStyle = textBodyNode['a:lstStyle']
   const slideMasterTextStyles = warpObj['slideMasterTextStyles']
 
@@ -178,8 +236,22 @@ export function getSpanStyleInfo(node, pNode, textBodyNode, pFontStyle, slideLay
 
   let styleText = ''
   const fontColor = getFontColor(node, pNode, lstStyle, pFontStyle, lvl, warpObj)
-  const fontSize = getFontSize(node, slideLayoutSpNode, type, slideMasterTextStyles, textBodyNode, pNode)
-  const fontType = getFontType(node, type, warpObj, slideLayoutSpNode, slideMasterSpNode, slideMasterTextStyles)
+  const fontSize = getFontSize(
+    node,
+    slideLayoutSpNode,
+    type,
+    slideMasterTextStyles,
+    textBodyNode,
+    pNode
+  )
+  const fontType = getFontType(
+    node,
+    type,
+    warpObj,
+    slideLayoutSpNode,
+    slideMasterSpNode,
+    slideMasterTextStyles
+  )
   const fontBold = getFontBold(node)
   const fontItalic = getFontItalic(node)
   const fontDecoration = getFontDecoration(node)
@@ -192,7 +264,7 @@ export function getSpanStyleInfo(node, pNode, textBodyNode, pFontStyle, slideLay
     if (typeof fontColor === 'string') styleText += `color: ${fontColor};`
     else if (fontColor.colors) {
       const { colors, rot } = fontColor
-      const stops = colors.map(item => `${item.color} ${item.pos}`).join(', ')
+      const stops = colors.map((item) => `${item.color} ${item.pos}`).join(', ')
       const gradientStyle = `linear-gradient(${rot + 90}deg, ${stops})`
       styleText += `background: ${gradientStyle}; background-clip: text; color: transparent;`
     }
@@ -214,6 +286,6 @@ export function getSpanStyleInfo(node, pNode, textBodyNode, pFontStyle, slideLay
     styleText,
     text,
     hasLink,
-    linkURL: hasLink ? warpObj['slideResObj'][linkID]['target'] : null
+    linkURL: hasLink ? warpObj['slideResObj'][linkID]['target'] : null,
   }
 }

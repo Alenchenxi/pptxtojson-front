@@ -8,14 +8,17 @@ export function getBorder(node, elType, warpObj) {
     const lnRefNode = getTextByPathList(node, ['p:style', 'a:lnRef'])
     if (lnRefNode) {
       const lnIdx = getTextByPathList(lnRefNode, ['attrs', 'idx'])
-      lineNode = warpObj['themeContent']['a:theme']['a:themeElements']['a:fmtScheme']['a:lnStyleLst']['a:ln'][Number(lnIdx) - 1]
+      lineNode =
+        warpObj['themeContent']['a:theme']['a:themeElements']['a:fmtScheme']['a:lnStyleLst'][
+          'a:ln'
+        ][Number(lnIdx) - 1]
     }
   }
   if (!lineNode) lineNode = node
 
   const isNoFill = getTextByPathList(lineNode, ['a:noFill'])
 
-  let borderWidth = isNoFill ? 0 : (parseInt(getTextByPathList(lineNode, ['attrs', 'w'])) / 12700)
+  let borderWidth = isNoFill ? 0 : parseInt(getTextByPathList(lineNode, ['attrs', 'w'])) / 12700
   if (isNaN(borderWidth)) {
     if (lineNode) borderWidth = 0
     else if (elType !== 'obj') borderWidth = 0
@@ -39,7 +42,7 @@ export function getBorder(node, elType, warpObj) {
 
       if (shade) {
         shade = parseInt(shade) / 100000
-        
+
         const color = tinycolor('#' + borderColor).toHsl()
         borderColor = tinycolor({ h: color.h, s: color.s, l: color.l * shade, a: color.a }).toHex()
       }
