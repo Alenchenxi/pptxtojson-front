@@ -38,12 +38,43 @@ export function simplifyLostLess(children, parentAttributes = {}) {
   return out
 }
 
-export async function readXmlFile(zip, filename) {
+function advancedTagNameCleaner(data, seen = new WeakMap()) {
+  // 防止循环引用
+  if (seen.has(data)) {
+    return data
+  }
+  if (data && typeof data === 'object') {
+    seen.set(data, true)
+  }
+
+  // 处理当前节点的tagName
+  if (data && typeof data === 'object') {
+    if (data.tagName && typeof data.tagName === 'string') {
+      if (!data.tagName.startsWith('p:')) {
+        data.tagName = 'p:' + data.tagName
+      }
+    }
+
+    // 递归处理所有子节点和嵌套属性
+    Reflect.ownKeys(data).forEach((key) => {
+      if (data[key] && typeof data[key] === 'object') {
+        advancedTagNameCleaner(data[key], seen)
+      }
+    })
+  }
+
+  return data
+}
+
+export async function readXmlFile(zip, filename, cleanTagName = false) {
   try {
     const data = await zip.file(filename).async('string')
-    return simplifyLostLess(txml.parse(data))
-  }
-  catch {
+    const txmlData = txml.parse(data)
+    if (txmlData.length === 2 && cleanTagName) {
+      advancedTagNameCleaner(txmlData[1])
+    }
+    return simplifyLostLess(txmlData)
+  } catch {
     return null
   }
 }

@@ -89,7 +89,7 @@ async function getContentTypes(zip) {
 }
 
 async function getSlideInfo(zip) {
-  const content = await readXmlFile(zip, 'ppt/presentation.xml')
+  const content = await readXmlFile(zip, 'ppt/presentation.xml', true)
   const sldSzAttrs = content['p:presentation']['p:sldSz']['attrs']
   const defaultTextStyle = content['p:presentation']['p:defaultTextStyle']
   return {
