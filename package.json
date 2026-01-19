@@ -1,27 +1,30 @@
 {
-	"name": "pptxtojson",
-	"version": "1.12.0",
+	"name": "pptxtojson-front",
+	"version": "1.13.1",
+	"files": ["dist"],
 	"description": "A javascript tool for parsing .pptx file",
 	"type": "module",
 	"main": "./dist/index.umd.js",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
-		"clean:dist": "rimraf dist",
 		"dev": "rollup -c -w",
-		"lint": "eslint src --ext .js,.jsx,.ts,.tsx"
+		"lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+		"prettier": "prettier --write src --ext .js,.jsx,.ts,.tsx",
+		"prepack": "npm run build",
+		"build": "rollup --config"
 	},
-	"author": "pipipi_pikachu@163.com",
+	"author": "alen_chenxi@outlook.com",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pipipi-pikachu/pptxtojson"
+		"url": "https://github.com/Alenchenxi/pptxtojson-front"
 	},
 	"keywords": [
 		"ppt",
 		"pptx",
 		"json"
 	],
-	"homepage": "https://github.com/pipipi-pikachu/pptxtojson",
+	"homepage": "https://github.com/Alenchenxi/pptxtojson-front",
 	"license": "MIT",
 	"publishConfig": {
 		"registry": "https://registry.npmjs.org"
