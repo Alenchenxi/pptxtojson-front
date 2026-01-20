@@ -22,7 +22,6 @@ import { getTableBorders, getTableCellParams, getTableRowParams } from './table'
 import { genTextBody } from './text'
 import {
   angleToDegrees,
-  base64ArrayBuffer,
   escapeHtml,
   extractFileExtension,
   getMimeType,
@@ -929,7 +928,7 @@ async function processPicNode(node, warpObj, source) {
   const mimeType = getMimeType(imgFileExt)
   const { top, left } = getPosition(xfrmNode, undefined, undefined)
   const { width, height } = getSize(xfrmNode, undefined, undefined)
-  const src = `data:${mimeType};base64,${base64ArrayBuffer(imgArrayBuffer)}`
+  const src = URL.createObjectURL(new Blob([imgArrayBuffer], { type: mimeType }))
 
   const isFlipV = getTextByPathList(xfrmNode, ['attrs', 'flipV']) === '1'
   const isFlipH = getTextByPathList(xfrmNode, ['attrs', 'flipH']) === '1'
