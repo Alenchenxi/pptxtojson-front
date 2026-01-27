@@ -906,7 +906,9 @@ async function processPicNode(node, warpObj, source) {
   else resObj = warpObj['slideResObj']
 
   const order = node['attrs']['order']
-
+  const videoNode = getTextByPathList(node, ['p:nvPicPr', 'p:nvPr', 'a:videoFile'])
+  const audioNode = getTextByPathList(node, ['p:nvPicPr', 'p:nvPr', 'a:audioFile'])
+  if (videoNode || audioNode) return
   const rid = node['p:blipFill']['a:blip']['attrs']['r:embed']
   const imgName = resObj[rid]['target']
   const imgFileExt = extractFileExtension(imgName).toLowerCase()
@@ -937,12 +939,10 @@ async function processPicNode(node, warpObj, source) {
   const rotateNode = getTextByPathList(node, ['p:spPr', 'a:xfrm', 'attrs', 'rot'])
   if (rotateNode) rotate = angleToDegrees(rotateNode)
 
-  const videoNode = getTextByPathList(node, ['p:nvPicPr', 'p:nvPr', 'a:videoFile'])
   let videoRid, videoFile, videoFileExt, videoMimeType, uInt8ArrayVideo, videoBlob
   let isVdeoLink = false
 
   if (videoNode) {
-    return
     videoRid = videoNode['attrs']['r:link']
     videoFile = resObj[videoRid]['target']
     if (isVideoLink(videoFile)) {
@@ -962,10 +962,8 @@ async function processPicNode(node, warpObj, source) {
     }
   }
 
-  const audioNode = getTextByPathList(node, ['p:nvPicPr', 'p:nvPr', 'a:audioFile'])
   let audioRid, audioFile, audioFileExt, uInt8ArrayAudio, audioBlob
   if (audioNode) {
-    return
     audioRid = audioNode['attrs']['r:link']
     audioFile = resObj[audioRid]['target']
     audioFileExt = extractFileExtension(audioFile).toLowerCase()
