@@ -942,6 +942,7 @@ async function processPicNode(node, warpObj, source) {
   let isVdeoLink = false
 
   if (videoNode) {
+    return
     videoRid = videoNode['attrs']['r:link']
     videoFile = resObj[videoRid]['target']
     if (isVideoLink(videoFile)) {
@@ -964,6 +965,7 @@ async function processPicNode(node, warpObj, source) {
   const audioNode = getTextByPathList(node, ['p:nvPicPr', 'p:nvPr', 'a:audioFile'])
   let audioRid, audioFile, audioFileExt, uInt8ArrayAudio, audioBlob
   if (audioNode) {
+    return
     audioRid = audioNode['attrs']['r:link']
     audioFile = resObj[audioRid]['target']
     audioFileExt = extractFileExtension(audioFile).toLowerCase()
