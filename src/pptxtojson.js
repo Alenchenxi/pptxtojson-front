@@ -14,7 +14,7 @@ import {
 } from './fill'
 import { findOMath, latexFormart, parseOMath } from './math'
 import { getPosition, getSize } from './position'
-import { readXmlFile } from './readXmlFile'
+import { readXmlFile,clearXmlCache } from './readXmlFile'
 import { getShadow } from './shadow'
 import { getCustomShapePath, identifyShape } from './shape'
 import { getShapePath } from './shapePath'
@@ -40,10 +40,16 @@ export async function parse(file) {
   const { width, height, defaultTextStyle } = await getSlideInfo(zip)
   const { themeContent, themeColors } = await getTheme(zip)
 
-  for (const filename of filesInfo.slides) {
-    const singleSlide = await processSingleSlide(zip, filename, themeContent, defaultTextStyle)
-    slides.push(singleSlide)
-  }
+  // 优化：并行处理所有幻灯片，而不是串行处理
+  // 使用 Promise.all 并行解析，充分利用 CPU 多核
+  const slidePromises = filesInfo.slides.map(filename => 
+    processSingleSlide(zip, filename, themeContent, defaultTextStyle)
+  )
+  const parsedSlides = await Promise.all(slidePromises)
+  slides.push(...parsedSlides)
+
+  // // 优化：解析完成后清除 XML 缓存，避免内存泄漏
+  clearXmlCache()
 
   return {
     slides,
