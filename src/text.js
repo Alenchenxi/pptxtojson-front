@@ -262,6 +262,12 @@ export function getSpanStyleInfo(
 
   if (fontColor) {
     if (typeof fontColor === 'string') styleText += `color: ${fontColor};`
+    else if(Array.isArray(fontColor)){
+      const [specialType,color]=fontColor
+      if (specialType ==='SOLID_FILE'){
+        styleText += `background: ${color}; background-clip: text; color: transparent;`
+      }
+    }
     else if (fontColor.colors) {
       const { colors, rot } = fontColor
       const stops = colors.map((item) => `${item.color} ${item.pos}`).join(', ')
