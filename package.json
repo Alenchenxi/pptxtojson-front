@@ -1,6 +1,6 @@
 {
 	"name": "pptxtojson-front",
-	"version": "1.16.3",
+	"version": "1.17.3",
 	"files": ["dist"],
 	"description": "A javascript tool for parsing .pptx file",
 	"type": "module",

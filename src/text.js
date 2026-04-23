@@ -12,6 +12,7 @@ import {
   getFontSpace,
   getFontSubscript,
   getFontShadow,
+  getFontOutline,
 } from './fontStyle'
 
 export function genTextBody(
@@ -236,6 +237,7 @@ export function getSpanStyleInfo(
 
   let styleText = ''
   const fontColor = getFontColor(node, pNode, lstStyle, pFontStyle, lvl, warpObj)
+  const fontOutline = getFontOutline(node, pNode, lstStyle, pFontStyle, lvl, warpObj)
   const fontSize = getFontSize(
     node,
     slideLayoutSpNode,
@@ -284,6 +286,9 @@ export function getSpanStyleInfo(
   if (fontSpace) styleText += `letter-spacing: ${fontSpace};`
   if (subscript) styleText += `vertical-align: ${subscript};`
   if (shadow) styleText += `text-shadow: ${shadow};`
+  if (fontOutline) {
+    styleText += `-webkit-text-stroke-width: ${fontOutline.width}pt; -webkit-text-stroke-color: ${fontOutline.color}; paint-order: stroke fill;`
+  }
 
   const linkID = getTextByPathList(node, ['a:rPr', 'a:hlinkClick', 'attrs', 'r:id'])
   const hasLink = linkID && warpObj['slideResObj'][linkID]

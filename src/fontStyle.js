@@ -275,3 +275,52 @@ export function getFontShadow(node, warpObj) {
   }
   return ''
 }
+
+export function getFontOutline(node, pNode, lstStyle, pFontStyle, lvl, warpObj) {
+  const rPrNode = getTextByPathList(node, ['a:rPr'])
+  let lnNode = rPrNode ? getTextByPathList(rPrNode, ['a:ln']) : null
+
+  // Fallback to lstStyle defRPr
+  if (!lnNode && lstStyle) {
+    const lstStyledefRPr = getTextByPathList(lstStyle, ['a:lvl' + lvl + 'pPr', 'a:defRPr'])
+    if (lstStyledefRPr) {
+      lnNode = getTextByPathList(lstStyledefRPr, ['a:ln'])
+    }
+  }
+
+  // Check for "no line" explicitly
+  if (rPrNode && rPrNode['a:ln'] !== undefined && !lnNode) {
+    // a:ln exists but is empty (noFill), means no outline
+    return null
+  }
+
+  if (!lnNode) return null
+
+  // Width in EMU (12700 = 1pt)
+  const wAttr = getTextByPathList(lnNode, ['attrs', 'w'])
+  if (!wAttr) return null
+
+  const widthPt = parseInt(wAttr) / 12700
+  if (widthPt <= 0) return null
+
+  // Get outline color from solidFill inside a:ln
+  let color = ''
+  const fillType = getFillType(lnNode)
+  if (fillType === 'SOLID_FILL') {
+    const solidFillNode = lnNode['a:solidFill']
+    color = getSolidFill(solidFillNode, undefined, undefined, warpObj)
+  } else if (fillType === 'NO_FILL') {
+    return null
+  }
+
+  if (!color) {
+    // Default outline color follows text color
+    color = getFontColor(node, pNode, lstStyle, pFontStyle, lvl, warpObj)
+  }
+  if (!color) color = '#000000'
+
+  return {
+    width: widthPt,
+    color: color,
+  }
+}
