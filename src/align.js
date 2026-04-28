@@ -192,3 +192,32 @@ export function getParagraphSpacing(pNode) {
 
   return Object.keys(spacing).length > 0 ? spacing : null
 }
+
+export function getParagraphIndent(pNode, spNode, type, warpObj) {
+  if (!pNode) return null
+
+  const pPrNode = pNode['a:pPr']
+  if (!pPrNode) return null
+
+  const indent = {}
+
+  // marL: 左边距（整体左缩进），单位 EMU
+  const marL = getTextByPathList(pPrNode, ['attrs', 'marL'])
+  if (marL) {
+    indent.marginLeft = parseInt(marL) / 12700 + 'pt'
+  }
+
+  // indent: 首行缩进，单位 EMU（可为负值=悬挂缩进）
+  const indentVal = getTextByPathList(pPrNode, ['attrs', 'indent'])
+  if (indentVal) {
+    indent.textIndent = parseInt(indentVal) / 12700 + 'pt'
+  }
+
+  // marR: 右边距，单位 EMU
+  const marR = getTextByPathList(pPrNode, ['attrs', 'marR'])
+  if (marR) {
+    indent.marginRight = parseInt(marR) / 12700 + 'pt'
+  }
+
+  return Object.keys(indent).length > 0 ? indent : null
+}
